@@ -1,18 +1,17 @@
--- ============================================================
+
 -- DATABASE: clinic_db
 -- Healthcare Clinic Management System
--- Author   : [Your Name]
+-- Name  : Maheen Joga
 -- Module   : B103 Databases & Big Data — Gisma University
--- ============================================================
+
 
 DROP DATABASE IF EXISTS clinic_db;
 CREATE DATABASE clinic_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE clinic_db;
 
--- ============================================================
 -- 1. DEPARTMENT
 --    head_doctor_id FK added after DOCTOR exists (circular ref)
--- ============================================================
+
 CREATE TABLE Department (
     department_id   INT            AUTO_INCREMENT PRIMARY KEY,
     dept_name       VARCHAR(100)   NOT NULL,
@@ -21,9 +20,9 @@ CREATE TABLE Department (
     head_doctor_id  INT            NULL
 );
 
--- ============================================================
+
 -- 2. DOCTOR
--- ============================================================
+
 CREATE TABLE Doctor (
     doctor_id       INT            AUTO_INCREMENT PRIMARY KEY,
     first_name      VARCHAR(50)    NOT NULL,
@@ -44,9 +43,9 @@ ALTER TABLE Department
         FOREIGN KEY (head_doctor_id) REFERENCES Doctor(doctor_id)
         ON DELETE SET NULL ON UPDATE CASCADE;
 
--- ============================================================
+
 -- 3. INSURANCE
--- ============================================================
+
 CREATE TABLE Insurance (
     insurance_id    INT            AUTO_INCREMENT PRIMARY KEY,
     provider_name   VARCHAR(100)   NOT NULL,
@@ -56,9 +55,9 @@ CREATE TABLE Insurance (
     expiry_date     DATE           NOT NULL
 );
 
--- ============================================================
+
 -- 4. PATIENT
--- ============================================================
+
 CREATE TABLE Patient (
     patient_id        INT            AUTO_INCREMENT PRIMARY KEY,
     first_name        VARCHAR(50)    NOT NULL,
@@ -76,9 +75,9 @@ CREATE TABLE Patient (
         ON DELETE SET NULL ON UPDATE CASCADE
 );
 
--- ============================================================
+
 -- 5. ICD_CODE  (International Classification of Diseases)
--- ============================================================
+
 CREATE TABLE ICD_Code (
     icd_code_id     INT            AUTO_INCREMENT PRIMARY KEY,
     code            VARCHAR(10)    NOT NULL UNIQUE,
@@ -86,9 +85,9 @@ CREATE TABLE ICD_Code (
     category        VARCHAR(100)
 );
 
--- ============================================================
+
 -- 6. APPOINTMENT
--- ============================================================
+
 CREATE TABLE Appointment (
     appointment_id  INT            AUTO_INCREMENT PRIMARY KEY,
     patient_id      INT            NOT NULL,
@@ -106,9 +105,9 @@ CREATE TABLE Appointment (
         ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
--- ============================================================
+
 -- 7. DIAGNOSIS  (M:M bridge: Appointment <-> ICD_Code)
--- ============================================================
+
 CREATE TABLE Diagnosis (
     diagnosis_id    INT            AUTO_INCREMENT PRIMARY KEY,
     appointment_id  INT            NOT NULL,
@@ -125,9 +124,9 @@ CREATE TABLE Diagnosis (
         UNIQUE (appointment_id, icd_code_id)
 );
 
--- ============================================================
+
 -- 8. MEDICATION
--- ============================================================
+
 CREATE TABLE Medication (
     medication_id   INT            AUTO_INCREMENT PRIMARY KEY,
     med_name        VARCHAR(100)   NOT NULL,
@@ -139,9 +138,9 @@ CREATE TABLE Medication (
                     CHECK (stock_quantity >= 0)
 );
 
--- ============================================================
+
 -- 9. PRESCRIPTION
--- ============================================================
+
 CREATE TABLE Prescription (
     prescription_id INT            AUTO_INCREMENT PRIMARY KEY,
     appointment_id  INT            NOT NULL UNIQUE,
@@ -153,9 +152,9 @@ CREATE TABLE Prescription (
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- ============================================================
+
 -- 10. PRESCRIPTION_MEDICATION (M:M bridge: Prescription <-> Medication)
--- ============================================================
+
 CREATE TABLE Prescription_Medication (
     pm_id           INT            AUTO_INCREMENT PRIMARY KEY,
     prescription_id INT            NOT NULL,
@@ -174,9 +173,9 @@ CREATE TABLE Prescription_Medication (
         UNIQUE (prescription_id, medication_id)
 );
 
--- ============================================================
+
 -- 11. INVOICE
--- ============================================================
+
 CREATE TABLE Invoice (
     invoice_id      INT            AUTO_INCREMENT PRIMARY KEY,
     appointment_id  INT            NOT NULL UNIQUE,
@@ -196,9 +195,9 @@ CREATE TABLE Invoice (
         CHECK (paid_amount <= total_amount)
 );
 
--- ============================================================
+
 -- INDEXES (performance optimisation)
--- ============================================================
+
 CREATE INDEX idx_doctor_dept     ON Doctor(department_id);
 CREATE INDEX idx_patient_ins     ON Patient(insurance_id);
 CREATE INDEX idx_appt_patient    ON Appointment(patient_id);
@@ -212,9 +211,9 @@ CREATE INDEX idx_pm_med          ON Prescription_Medication(medication_id);
 CREATE INDEX idx_inv_status      ON Invoice(status);
 
 
--- ============================================================
+
 -- SAMPLE DATA
--- ============================================================
+
 
 -- Departments (no head yet; set after doctors are inserted)
 INSERT INTO Department (dept_name, location, phone) VALUES
@@ -421,9 +420,9 @@ WHERE  med_name = 'Salbutamol Inhaler';
 DELETE FROM Appointment
 WHERE  appointment_id = 15
   AND  status IN ('Scheduled', 'No-Show');
--- ══════════════════════════════════════════════════════════════
+
 -- Q1. Monthly Revenue Report: total billed, collected, outstanding
--- ══════════════════════════════════════════════════════════════
+
 SELECT
     DATE_FORMAT(a.appt_date, '%Y-%m')       AS month,
     COUNT(DISTINCT i.invoice_id)            AS total_invoices,
@@ -437,9 +436,9 @@ GROUP BY DATE_FORMAT(a.appt_date, '%Y-%m')
 ORDER BY month;
 
 
--- ══════════════════════════════════════════════════════════════
+
 -- Q2. Doctor Workload & Earnings: appointments, completion rate, revenue
--- ══════════════════════════════════════════════════════════════
+
 SELECT
     CONCAT(d.first_name, ' ', d.last_name)  AS doctor,
     d.specialization,
@@ -458,9 +457,9 @@ GROUP BY d.doctor_id, d.first_name, d.last_name, d.specialization, dept.dept_nam
 ORDER BY SUM(COALESCE(i.paid_amount, 0)) DESC;
 
 
--- ══════════════════════════════════════════════════════════════
+
 -- Q3. Top 5 Most Prescribed Medications with cost analysis
--- ══════════════════════════════════════════════════════════════
+
 SELECT
     m.med_name,
     m.manufacturer,
@@ -474,9 +473,9 @@ ORDER BY times_prescribed DESC
 LIMIT 5;
 
 
--- ══════════════════════════════════════════════════════════════
+
 -- Q4. Patient Diagnosis History with insurance coverage detail
--- ══════════════════════════════════════════════════════════════
+
 SELECT
     CONCAT(p.first_name, ' ', p.last_name)  AS patient,
     p.date_of_birth,
@@ -499,9 +498,9 @@ WHERE a.status = 'Completed'
 ORDER BY p.last_name, a.appt_date DESC;
 
 
--- ══════════════════════════════════════════════════════════════
+
 -- Q5. Multi-diagnosis appointments (demonstrates M:M power)
--- ══════════════════════════════════════════════════════════════
+
 SELECT
     a.appointment_id,
     a.appt_date,
@@ -521,9 +520,9 @@ HAVING COUNT(dg.diagnosis_id) > 1
 ORDER BY diagnosis_count DESC;
 
 
--- ══════════════════════════════════════════════════════════════
+
 -- Q6. Patients with outstanding balances (accounts receivable)
--- ══════════════════════════════════════════════════════════════
+
 SELECT
     CONCAT(p.first_name, ' ', p.last_name)      AS patient,
     p.email,
@@ -540,10 +539,8 @@ GROUP BY p.patient_id, p.first_name, p.last_name, p.email, p.phone, ins.provider
 HAVING SUM(i.total_amount - i.paid_amount) > 0
 ORDER BY SUM(i.total_amount - i.paid_amount) DESC;
 
-
--- ══════════════════════════════════════════════════════════════
 -- Q7. Department performance summary (nested aggregation)
--- ══════════════════════════════════════════════════════════════
+
 SELECT
     dept.dept_name,
     COUNT(DISTINCT doc.doctor_id)               AS num_doctors,
