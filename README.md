@@ -57,7 +57,7 @@ A fully normalised relational database system designed to manage the core operat
 **Prerequisites:** MySQL 8.0 or higher
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/clinic-db.git
+git clone https://github.com/Maheen-Joga/Clinic-Management-System-DB/clinic-db.git
 cd clinic-db
 
 # 2. Log into MySQL
