@@ -19,7 +19,7 @@ A fully normalised relational database system designed to manage the core operat
 
 ## 🎥 Video Demonstration
 
-📁 Google Drive | [Watch on Google Drive](https://drive.google.com/file/d/(https://drive.google.com/file/d/1Z9gewASNsluWNOy_I3y35r9wJDvboQBR/view?usp=share_link)) |
+📁 Google Drive | [Watch on Google Drive]((https://drive.google.com/file/d/1Z9gewASNsluWNOy_I3y35r9wJDvboQBR/view?usp=share_link)) |
 
 ## 📁 Repository Structure
 ---
