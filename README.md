@@ -115,7 +115,7 @@ GROUP BY a.appointment_id, a.appt_date, p.first_name, p.last_name, d.first_name,
 HAVING COUNT(dg.diagnosis_id) > 1
 ORDER BY diagnosis_count DESC;
 
-
+```
 ---
 
 ## 👤 Author
